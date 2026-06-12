@@ -1,6 +1,6 @@
 # WWE Royal Rumble Predictor
 
-A **MERN Stack** web app that lets you build a Royal Rumble roster, run live simulations, and get **AI/ML win predictions**.
+A **MERN Stack** web app that lets you build a Royal Rumble roster, run live simulations, and get **AI/ML win predictions**, for real WWE fans
 
 - **M**ongoDB — stores wrestlers, rumble setups, and simulation history
 - **E**xpress — REST API backend

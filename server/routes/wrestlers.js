@@ -3,6 +3,7 @@ const router = express.Router();
 const Wrestler = require('../models/Wrestler');
 const DEFAULT_WRESTLERS = require('../data/defaultWrestlers');
 const fileDb = require('../fileDb');
+const { sanitizeWrestlers } = require('../utils/sanitizeWrestlers');
 
 const useFile = () => global.dbMode === 'file';
 
@@ -70,10 +71,19 @@ router.post('/reset', async (req, res) => {
 router.post('/import', async (req, res) => {
   try {
     const { wrestlers } = req.body;
-    if (!Array.isArray(wrestlers)) return res.status(400).json({ error: 'wrestlers must be an array' });
-    if (useFile()) return res.json(fileDb.importWrestlers(wrestlers));
+    if (!Array.isArray(wrestlers)) {
+      return res.status(400).json({ error: 'wrestlers must be an array' });
+    }
+
+    const cleaned = sanitizeWrestlers(wrestlers);
+    if (cleaned.length === 0 && wrestlers.length > 0) {
+      return res.status(400).json({ error: 'No valid wrestlers found. Each wrestler needs a name.' });
+    }
+
+    if (useFile()) return res.json(fileDb.importWrestlers(cleaned));
+
     await Wrestler.deleteMany({});
-    const imported = await Wrestler.insertMany(wrestlers);
+    const imported = await Wrestler.insertMany(cleaned);
     res.json(imported);
   } catch (err) {
     res.status(400).json({ error: err.message });

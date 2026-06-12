@@ -4,6 +4,7 @@ import {
   getWrestlers, addWrestler, updateWrestler, deleteWrestler,
   resetWrestlers, importWrestlers, exportWrestlers
 } from '../api';
+import { parseWrestlerJson } from '../utils/importWrestlers';
 
 export default function Wrestlers() {
   const [wrestlers, setWrestlers] = useState([]);
@@ -86,21 +87,24 @@ export default function Wrestlers() {
   function handleImport() {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.json';
+    input.accept = '.json,application/json';
     input.onchange = async (e) => {
-      const file = e.target.files[0];
-      const text = await file.text();
+      const file = e.target.files?.[0];
+      if (!file) return;
+
       try {
-        const imported = JSON.parse(text);
-        if (!Array.isArray(imported)) return alert('Invalid file format');
-        if (!confirm(`Import ${imported.length} wrestlers? This will replace your current database.`)) return;
-        await importWrestlers(imported.map(({ name, winProbability, eliminationResistance, brand }) =>
-          ({ name, winProbability, eliminationResistance, brand })
-        ));
-        loadWrestlers();
-        alert('Import successful!');
-      } catch {
-        alert('Error parsing JSON file');
+        const text = await file.text();
+        const wrestlerList = parseWrestlerJson(text);
+
+        if (!confirm(`Import ${wrestlerList.length} wrestlers? This will replace your current database.`)) {
+          return;
+        }
+
+        await importWrestlers(wrestlerList);
+        await loadWrestlers();
+        alert(`Import successful! ${wrestlerList.length} wrestlers loaded.`);
+      } catch (err) {
+        alert(err.message || 'Import failed');
       }
     };
     input.click();
@@ -123,6 +127,11 @@ export default function Wrestlers() {
         <button className="btn" onClick={handleReset}>🔄 Reset to Default</button>
         <button className="btn" onClick={clearAll}>🗑️ Clear All</button>
       </div>
+
+      <p style={{ textAlign: 'center', color: '#888', fontSize: '14px', maxWidth: '600px', margin: '0 auto 20px' }}>
+        Import accepts a <code>.json</code> file — either a wrestler array or <code>{'{ "wrestlers": [...] }'}</code>.
+        Each wrestler needs: <code>name</code>, <code>winProbability</code>, <code>eliminationResistance</code>, <code>brand</code>.
+      </p>
 
       <div className="search-container">
         <input

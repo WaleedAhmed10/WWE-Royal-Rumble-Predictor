@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const RumbleSetup = require('../models/RumbleSetup');
 const fileDb = require('../fileDb');
-
-const useFile = () => global.dbMode === 'file';
+const { useFile } = require('../db');
 
 router.get('/', async (req, res) => {
   try {

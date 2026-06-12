@@ -4,8 +4,7 @@ const Wrestler = require('../models/Wrestler');
 const DEFAULT_WRESTLERS = require('../data/defaultWrestlers');
 const fileDb = require('../fileDb');
 const { sanitizeWrestlers } = require('../utils/sanitizeWrestlers');
-
-const useFile = () => global.dbMode === 'file';
+const { useFile } = require('../db');
 
 router.get('/', async (req, res) => {
   try {

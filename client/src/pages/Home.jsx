@@ -1,0 +1,86 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getSimulations, getSetup } from '../api';
+
+export default function Home() {
+  const navigate = useNavigate();
+  const [recentSims, setRecentSims] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    getSimulations()
+      .then(setRecentSims)
+      .catch(() => setError('Could not load simulations. Is the server running?'));
+  }, []);
+
+  async function quickSimulate() {
+    try {
+      const setup = await getSetup();
+      if (setup && setup.wrestlers?.length === 30) {
+        navigate('/simulate');
+      } else {
+        alert('Please build a Royal Rumble setup first!');
+        navigate('/builder');
+      }
+    } catch {
+      alert('Server not connected. Start the backend first!');
+    }
+  }
+
+  return (
+    <>
+      <div className="hero">
+        <h1>WWE Royal Rumble Predictor</h1>
+        <p>Who will headline WrestleMania? Make YOUR predictions!</p>
+        <div className="cta-buttons">
+          <button className="btn btn-primary" onClick={() => navigate('/builder')}>Build Rumble</button>
+          <button className="btn btn-secondary" onClick={quickSimulate}>Quick Simulate</button>
+          <button className="btn btn-secondary" onClick={() => navigate('/predictions')}>AI Predict</button>
+        </div>
+      </div>
+
+      {error && <div className="error-msg">{error}</div>}
+
+      <h2 className="section-title">Features</h2>
+      <div className="features">
+        <div className="feature-card">
+          <h3>Build Roster</h3>
+          <p>Create your wrestler database with custom win probabilities</p>
+        </div>
+        <div className="feature-card">
+          <h3>AI Predictions</h3>
+          <p>ML-powered win probability using stats and Monte Carlo</p>
+        </div>
+        <div className="feature-card">
+          <h3>Run Simulation</h3>
+          <p>Watch the Royal Rumble unfold minute by minute</p>
+        </div>
+        <div className="feature-card">
+          <h3>See Results</h3>
+          <p>Analyze winners, eliminations, and statistics</p>
+        </div>
+      </div>
+
+      <h2 className="section-title">Recent Simulations</h2>
+      <div className="simulations-grid">
+        {recentSims.length === 0 ? (
+          <div className="sim-card">
+            <h3>No Simulations Yet</h3>
+            <p>Run your first Royal Rumble simulation!</p>
+            <button className="btn" onClick={() => navigate('/builder')}>Start Building</button>
+          </div>
+        ) : (
+          recentSims.slice(0, 3).map((sim, i) => (
+            <div key={sim._id || i} className="sim-card">
+              <h3>🏆 {sim.winner}</h3>
+              <p>Duration: {Math.floor(sim.matchDuration)} min</p>
+              <p>Eliminations: {sim.mostEliminations}</p>
+              <p><small>{new Date(sim.createdAt).toLocaleString()}</small></p>
+              <button className="btn" onClick={() => navigate('/results')}>View Results</button>
+            </div>
+          ))
+        )}
+      </div>
+    </>
+  );
+}

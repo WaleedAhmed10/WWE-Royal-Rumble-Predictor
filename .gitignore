@@ -65,7 +65,9 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variable files
+# Local JSON database (fallback when MongoDB not running)
+server/data/db.json
+
 .env
 .env.*
 !.env.example

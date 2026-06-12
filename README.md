@@ -1,2 +1,104 @@
-# WWE-Royal-Rumble-Predictor
-Game Predictor Web App made from MERN Stack
+# WWE Royal Rumble Predictor
+
+A **MERN Stack** web app that lets you build a Royal Rumble roster, run live simulations, and get **AI/ML win predictions**.
+
+- **M**ongoDB — stores wrestlers, rumble setups, and simulation history
+- **E**xpress — REST API backend
+- **R**eact — frontend UI (Vite)
+- **N**ode.js — server runtime
+
+## Features
+
+| Page | What it does |
+|------|-------------|
+| **Home** | Overview, recent simulations, quick links |
+| **Wrestlers** | Add/edit/delete wrestlers (CRUD), import/export JSON |
+| **Builder** | Pick 30 wrestlers and assign entry numbers #1–#30 |
+| **AI Predict** | ML win probability (weighted scoring + Monte Carlo) |
+| **Simulate** | Watch the Rumble play out minute-by-minute |
+| **Results** | View winner, stats, timeline, share results |
+
+## AI / ML (Simple & Easy to Understand)
+
+The ML lives in `server/ml/predictor.js`:
+
+1. **Weighted Scoring** — combines win %, elimination resistance, and entry position bonus (late entries get a boost)
+2. **Monte Carlo** — runs 500 quick simulations and counts who wins most often
+
+No TensorFlow or Python needed — pure JavaScript that's easy to read and modify.
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+)
+- [MongoDB](https://www.mongodb.com/try/download/community) running locally, **or** a free [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster
+
+## Quick Start
+
+### 1. Install dependencies
+
+```bash
+npm run install-all
+```
+
+### 2. Configure MongoDB (optional)
+
+Copy the example env file:
+
+```bash
+copy server\.env.example server\.env
+```
+
+**If MongoDB is installed** — it connects automatically at `mongodb://127.0.0.1:27017/royal-rumble`
+
+**If MongoDB is NOT installed** — the app still works! It falls back to JSON file storage at `server/data/db.json`. Install MongoDB later or use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) for a real cloud database.
+
+### 3. Start the backend (Terminal 1)
+
+```bash
+npm run server
+```
+
+Server runs at **http://localhost:5000**
+
+### 4. Start the frontend (Terminal 2)
+
+```bash
+npm run client
+```
+
+App opens at **http://localhost:3000**
+
+## Project Structure
+
+```
+WWE-Royal-Rumble-Predictor/
+├── client/                 # React frontend
+│   └── src/
+│       ├── pages/          # Home, Wrestlers, Builder, Simulate, Results, Predictions
+│       ├── components/     # Navbar, shared UI
+│       └── App.css         # All page styles
+├── server/                 # Express backend
+│   ├── models/             # MongoDB schemas
+│   ├── routes/             # API routes
+│   ├── ml/predictor.js     # AI/ML prediction logic
+│   └── data/               # Default wrestler roster
+└── package.json            # Root scripts
+```
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/wrestlers` | List all wrestlers |
+| POST | `/api/wrestlers` | Add wrestler |
+| PUT | `/api/wrestlers/:id` | Update wrestler |
+| DELETE | `/api/wrestlers/:id` | Delete wrestler |
+| POST | `/api/wrestlers/reset` | Reset to default roster |
+| GET | `/api/setup` | Get current rumble setup |
+| POST | `/api/setup` | Save rumble setup |
+| GET | `/api/simulations` | Simulation history |
+| POST | `/api/simulations` | Save simulation result |
+| POST | `/api/predict` | Quick AI prediction |
+| POST | `/api/predict/monte-carlo` | Monte Carlo prediction |
+
+---
+
+*Fan project — not affiliated with WWE*

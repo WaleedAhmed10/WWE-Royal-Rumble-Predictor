@@ -30,7 +30,7 @@ No TensorFlow or Python needed — pure JavaScript that's easy to read and modif
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18+)
-- [MongoDB](https://www.mongodb.com/try/download/community) running locally, **or** a free [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster
+- MongoDB is **optional** — file storage works out of the box
 
 ## Quick Start
 
@@ -40,7 +40,7 @@ No TensorFlow or Python needed — pure JavaScript that's easy to read and modif
 npm run install-all
 ```
 
-### 2. Configure MongoDB (optional)
+### 2. Configure database (optional)
 
 Copy the example env file:
 
@@ -48,9 +48,7 @@ Copy the example env file:
 copy server\.env.example server\.env
 ```
 
-**If MongoDB is installed** — it connects automatically at `mongodb://127.0.0.1:27017/royal-rumble`
-
-**If MongoDB is NOT installed** — the app still works! It falls back to JSON file storage at `server/data/db.json`. Install MongoDB later or use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) for a real cloud database.
+The server tries MongoDB first. If it is not running, it automatically uses JSON file storage — no extra setup needed.
 
 ### 3. Start the backend (Terminal 1)
 

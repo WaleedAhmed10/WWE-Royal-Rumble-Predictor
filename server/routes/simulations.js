@@ -1,14 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Simulation = require('../models/Simulation');
-const fileDb = require('../fileDb');
-const { useFile } = require('../db');
+const store = require('../store');
 
 router.get('/', async (req, res) => {
   try {
-    if (useFile()) return res.json(fileDb.getSimulations());
-    const sims = await Simulation.find().sort({ createdAt: -1 }).limit(10);
-    res.json(sims);
+    res.json(await store.simulations.getAll());
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -16,9 +12,7 @@ router.get('/', async (req, res) => {
 
 router.get('/latest', async (req, res) => {
   try {
-    if (useFile()) return res.json(fileDb.getLatestSimulation());
-    const sim = await Simulation.findOne().sort({ createdAt: -1 });
-    res.json(sim || null);
+    res.json(await store.simulations.getLatest());
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -26,9 +20,7 @@ router.get('/latest', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    if (useFile()) return res.status(201).json(fileDb.saveSimulation(req.body));
-    const sim = new Simulation(req.body);
-    await sim.save();
+    const sim = await store.simulations.save(req.body);
     res.status(201).json(sim);
   } catch (err) {
     res.status(400).json({ error: err.message });

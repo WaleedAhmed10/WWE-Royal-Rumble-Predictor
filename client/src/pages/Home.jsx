@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSimulations, getSetup } from '../api';
+import { IMAGES } from '../constants/images';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -44,18 +45,22 @@ export default function Home() {
       <h2 className="section-title">Features</h2>
       <div className="features">
         <div className="feature-card">
+          <img src={IMAGES.buildRoster} alt="Build Roster" className="feature-img" />
           <h3>Build Roster</h3>
           <p>Create your wrestler database with custom win probabilities</p>
         </div>
         <div className="feature-card">
+          <img src={IMAGES.aiPredictions} alt="AI Predictions" className="feature-img" />
           <h3>AI Predictions</h3>
           <p>ML-powered win probability using stats and Monte Carlo</p>
         </div>
         <div className="feature-card">
+          <img src={IMAGES.runSimulation} alt="Run Simulation" className="feature-img" />
           <h3>Run Simulation</h3>
           <p>Watch the Royal Rumble unfold minute by minute</p>
         </div>
         <div className="feature-card">
+          <img src={IMAGES.seeResults} alt="See Results" className="feature-img" />
           <h3>See Results</h3>
           <p>Analyze winners, eliminations, and statistics</p>
         </div>

@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom';
+import { IMAGES } from '../constants/images';
 
 export default function Navbar() {
   return (
     <header className="site-header">
-      <div className="site-logo">🎪 ROYAL RUMBLE 2026</div>
+      <img src={IMAGES.banner} alt="Royal Rumble 2027" className="site-banner" />
       <nav>
         <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>
         <NavLink to="/wrestlers" className={({ isActive }) => isActive ? 'active' : ''}>Wrestlers</NavLink>

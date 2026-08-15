@@ -97,6 +97,10 @@ WWE-Royal-Rumble-Predictor/
 | POST | `/api/predict` | Quick AI prediction |
 | POST | `/api/predict/monte-carlo` | Monte Carlo prediction |
 
+## License
+
+See [LICENSE](LICENSE).
+
 ---
 
 *Fan project — not affiliated with WWE*

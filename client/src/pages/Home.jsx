@@ -42,6 +42,18 @@ export default function Home() {
 
       {error && <div className="error-msg">{error}</div>}
 
+      <section className="card" style={{ maxWidth: '900px', margin: '0 auto 40px' }}>
+        <h2 style={{ textAlign: 'center' }}>How to make a prediction</h2>
+        <ol style={{ lineHeight: 1.8 }}>
+          <li>Build a 30-wrestler lineup and choose entry numbers, or load the sample lineup in the Builder.</li>
+          <li>Open <strong>AI Predict</strong> to see win chances based on wrestler stats and entry position.</li>
+          <li>Choose <strong>Quick AI Predict</strong> for weighted rankings or <strong>Monte Carlo</strong> to compare results from 500 simulated rumbles.</li>
+        </ol>
+        <div style={{ textAlign: 'center' }}>
+          <button className="btn btn-secondary" onClick={() => navigate('/builder')}>Try the Sample Lineup</button>
+        </div>
+      </section>
+
       <h2 className="section-title">Features</h2>
       <div className="features">
         <div className="feature-card">

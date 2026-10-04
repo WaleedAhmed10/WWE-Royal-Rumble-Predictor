@@ -22,6 +22,7 @@ export const exportWrestlers = () => request('/wrestlers/export/all');
 // Setup
 export const getSetup = () => request('/setup');
 export const saveSetup = (wrestlers) => request('/setup', { method: 'POST', body: JSON.stringify({ wrestlers }) });
+export const getSampleRumble = () => request('/setup/sample');
 
 // Simulations
 export const getSimulations = () => request('/simulations');

@@ -68,10 +68,16 @@ export default function Predictions() {
 
   if (error) {
     return (
-      <div className="error-msg">
-        <p>{error}</p>
-        <button className="btn" onClick={() => navigate('/builder')}>Go to Builder</button>
-      </div>
+      <>
+        <div className="error-msg">
+          <p>{error}</p>
+          <button className="btn" onClick={() => navigate('/builder')}>Go to Builder and Load Sample</button>
+        </div>
+        <div className="card" style={{ maxWidth: '700px', margin: '20px auto', textAlign: 'center' }}>
+          <h3>How predictions work</h3>
+          <p>Build a 30-entry lineup first. Quick AI Predict ranks wrestlers using win probability, elimination resistance, and entry position. Monte Carlo compares win rates across 500 randomized simulations.</p>
+        </div>
+      </>
     );
   }
 
@@ -82,7 +88,7 @@ export default function Predictions() {
       <h1 className="page-title">AI Predictions</h1>
       <p style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 30px' }}>
         Our ML engine uses wrestler stats (win probability, elimination resistance) and entry position
-        to predict who is most likely to win the Royal Rumble.
+        to predict who is most likely to win the Royal Rumble. Load the sample lineup from the Builder to try it without creating your own roster.
       </p>
 
       <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>

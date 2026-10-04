@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { getWrestlers, getSetup, saveSetup } from '../api';
+import { getWrestlers, getSetup, saveSetup, getSampleRumble } from '../api';
 
 export default function Builder() {
   const navigate = useNavigate();
@@ -9,6 +9,8 @@ export default function Builder() {
   const [search, setSearch] = useState('');
   const [activeSlot, setActiveSlot] = useState(null);
   const [error, setError] = useState('');
+  const [sampleLoading, setSampleLoading] = useState(false);
+  const [sampleMessage, setSampleMessage] = useState('');
 
   useEffect(() => { loadData(); }, []);
 
@@ -72,6 +74,23 @@ export default function Builder() {
     }
   }
 
+  async function loadSampleRumble() {
+    setSampleLoading(true);
+    setSampleMessage('');
+    setError('');
+    try {
+      const sample = await getSampleRumble();
+      await saveSetup(sample);
+      setSlots(sample);
+      setActiveSlot(null);
+      setSampleMessage('Sample Rumble loaded and saved. Open AI Predict to try both prediction models.');
+    } catch (err) {
+      setError(`Could not load the sample Rumble: ${err.message}`);
+    } finally {
+      setSampleLoading(false);
+    }
+  }
+
   const filledCount = slots.filter(s => s !== null).length;
   const filtered = allWrestlers.filter(w =>
     w.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -83,6 +102,16 @@ export default function Builder() {
       <h1 className="page-title">Royal Rumble Builder</h1>
       <p style={{ textAlign: 'center' }}>Select 30 wrestlers and assign entry numbers 1-30</p>
       {error && <div className="error-msg">{error}</div>}
+
+      <div className="card" style={{ maxWidth: '760px', margin: '0 auto 20px', textAlign: 'center' }}>
+        <h3>New to predictions?</h3>
+        <p>Load the 30-entry sample lineup to try the prediction tools right away. This saves it as your current setup without changing your wrestler database.</p>
+        <button className="btn btn-secondary" onClick={loadSampleRumble} disabled={sampleLoading}>
+          {sampleLoading ? 'Loading Sample...' : 'Load Sample Rumble'}
+        </button>
+        {sampleMessage && <p role="status" style={{ color: '#4CAF50', marginBottom: 0 }}>{sampleMessage}</p>}
+        {sampleMessage && <button className="btn" onClick={() => navigate('/predictions')}>Open AI Predictions</button>}
+      </div>
 
       <div className="builder-container">
         <div className="database-panel">

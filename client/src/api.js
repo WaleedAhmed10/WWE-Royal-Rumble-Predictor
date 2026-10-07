@@ -1,4 +1,4 @@
-const API = '/api';
+const API = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
 
 async function request(url, options = {}) {
   let res;
@@ -8,7 +8,7 @@ async function request(url, options = {}) {
       ...options
     });
   } catch {
-    throw new Error('Could not connect to the API server. Start the backend with "npm run server" and try again.');
+    throw new Error(`Could not connect to the API server at ${API}. Check that the backend is running and the API URL is correct.`);
   }
 
   const body = await res.text();
@@ -17,7 +17,10 @@ async function request(url, options = {}) {
     data = body ? JSON.parse(body) : {};
   } catch {
     const excerpt = body.trim().replace(/\s+/g, ' ').slice(0, 120);
-    throw new Error(`The server returned a non-JSON response (HTTP ${res.status}). Check that the backend is running and the API URL is correct.${excerpt ? ` Response: ${excerpt}` : ''}`);
+    const hint = res.status === 404
+      ? ` The request went to ${API}${url}; set VITE_API_URL to your deployed backend API URL (including /api) and rebuild the frontend.`
+      : ' Check that the backend is running and the API URL is correct.';
+    throw new Error(`The server returned a non-JSON response (HTTP ${res.status}).${hint}${excerpt ? ` Response: ${excerpt}` : ''}`);
   }
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data;

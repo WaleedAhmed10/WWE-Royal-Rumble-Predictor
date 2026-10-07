@@ -4,7 +4,7 @@ import {
   getWrestlers, addWrestler, updateWrestler, deleteWrestler,
   resetWrestlers, importWrestlers, exportWrestlers
 } from '../api';
-import { parseWrestlerJson } from '../utils/importWrestlers';
+import { parseWrestlerFile } from '../utils/importWrestlers';
 
 export default function Wrestlers() {
   const [wrestlers, setWrestlers] = useState([]);
@@ -75,26 +75,34 @@ export default function Wrestlers() {
   async function handleExport() {
     if (wrestlers.length === 0) return alert('No wrestlers to export!');
     const data = await exportWrestlers();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const columns = ['name', 'brand', 'winProbability', 'eliminationResistance'];
+    const csv = [
+      columns.join(','),
+      ...data.map(w => columns.map(column =>
+        `"${String(w[column] ?? '').replace(/"/g, '""')}"`
+      ).join(','))
+    ].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `wrestlers-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `wrestlers-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
-    alert('Database exported!');
+    URL.revokeObjectURL(url);
+    alert('Database exported as CSV!');
   }
 
   function handleImport() {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.json,application/json';
+    input.accept = '.csv,.xml,.json,text/csv,application/xml,application/json';
     input.onchange = async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
 
       try {
         const text = await file.text();
-        const wrestlerList = parseWrestlerJson(text);
+        const wrestlerList = parseWrestlerFile(text, file.name);
 
         if (!confirm(`Import ${wrestlerList.length} wrestlers? This will replace your current database.`)) {
           return;
@@ -129,8 +137,8 @@ export default function Wrestlers() {
       </div>
 
       <p style={{ textAlign: 'center', color: '#888', fontSize: '14px', maxWidth: '600px', margin: '0 auto 20px' }}>
-        Import accepts a <code>.json</code> file — either a wrestler array or <code>{'{ "wrestlers": [...] }'}</code>.
-        Each wrestler needs: <code>name</code>, <code>winProbability</code>, <code>eliminationResistance</code>, <code>brand</code>.
+        Import CSV or XML wrestler files (legacy JSON is also supported). CSV headers: <code>name</code>, <code>brand</code>, <code>winProbability</code>, <code>eliminationResistance</code>.
+        Missing probability and resistance values use defaults.
       </p>
 
       <div className="search-container">

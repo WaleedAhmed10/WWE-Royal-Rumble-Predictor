@@ -1,11 +1,24 @@
 const API = '/api';
 
 async function request(url, options = {}) {
-  const res = await fetch(`${API}${url}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options
-  });
-  const data = await res.json();
+  let res;
+  try {
+    res = await fetch(`${API}${url}`, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options
+    });
+  } catch {
+    throw new Error('Could not connect to the API server. Start the backend with "npm run server" and try again.');
+  }
+
+  const body = await res.text();
+  let data;
+  try {
+    data = body ? JSON.parse(body) : {};
+  } catch {
+    const excerpt = body.trim().replace(/\s+/g, ' ').slice(0, 120);
+    throw new Error(`The server returned a non-JSON response (HTTP ${res.status}). Check that the backend is running and the API URL is correct.${excerpt ? ` Response: ${excerpt}` : ''}`);
+  }
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data;
 }

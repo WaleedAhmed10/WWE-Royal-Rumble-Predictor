@@ -20,7 +20,7 @@ export default function App() {
         <Route path="/predictions" element={<Predictions />} />
       </Routes>
       <footer>
-        <p>WWE Royal Rumble Predictor - MERN Stack + AI | Fan Project | Not affiliated with WWE</p>
+        <p>WWE Royal Rumble Predictor - AI Powered MERN Stack | Fan Project | Not affiliated with WWE</p>
       </footer>
     </>
   );
